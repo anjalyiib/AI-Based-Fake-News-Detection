@@ -15,7 +15,6 @@ FEATURES
 1.News Chatbot Tab
 
 -Answer news-related questions
--Detect fake news
 -Identify political bias(Left/Right/Center)
 
 2.Fake News Detection Tab
