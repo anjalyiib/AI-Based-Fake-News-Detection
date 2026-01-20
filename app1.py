@@ -42,7 +42,9 @@ if user_input:
                                 "content": f"""
                                 You are an intelligent news analysis assistant.
                                 Answer like a human.
-                                Detect fake news if news text is provided.extra_body
+                                Detect fake news if news text is provided.
+                                Identify political bias(left/right/center).
+
                                 """
                             }
                         ]+st.session_state.chat,
