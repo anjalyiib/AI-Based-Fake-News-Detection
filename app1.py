@@ -18,41 +18,49 @@ tab1,tab2=st.tabs(["Fake News Detection","Summary and Key points"])
 
 #chatbot sidebar
 st.sidebar.title("News Based Chatbot")
-chat_input=st.sidebar.text_area("Enter text to analyze or ask a question:",height=160,key="chat_input")
-analyze_text=st.sidebar.button("Analyze News Text")
-clear_text=st.sidebar.button("Clear History")
-if analyze_text:
-    if not chat_input.strip():
-        st.sidebar.warning("Please enter some text to analyze.")
-    else:
-        with st.spinner("Detecting..."):
-            completion = client.chat.completions.create(
-                model="meta-llama/Meta-Llama-3-8B-Instruct",
+
+if "messages" not in st.session_state:
+    st.session_state.messages=[]
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+prompt=st.sidebar.chat_input("Enter text to analyze or ask a question:",height=160,key="chat_input")
+
+if prompt:
+    st.session_state.messages.append(
+        {"role":"user","content":promptt}
+    )
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    with st.spinner("thinking.."):
+        completion=client.chat.completions.create(
+            model="meta-llama/Meta-Llama-3-8B-Instruct",
                 messages=[
                     {
                         "role": "system",
                         "content": f"""
                         You are an intelligent news analysis assistant.
                          Your Tasks are:
-                         1.If user asks a question, answer factually.
+                         1.If user asks a question, answer like human.
                          2.If user provides news text,detect fake or real.
                          3.Identify political bias(left/right/center)
                          4.If user asks a general question, answer it normally.
                          Always be concise and informative.
                         """
-                    },
-                    {
-                        "role":"user",
-                        "content":chat_input
                     }
-                ],
-                temperature=0.3,
+                ]+st.session_state.messages,
+                temperature=0.4,
                 max_tokens=300
             )
-            response = completion.choices[0].message['content']
-            st.sidebar.markdown("### Analysis Result")
-            st.sidebar.success(response)
-            st.session_state.chat.append((chat_input,response))
+        reply=completion.choices[0].message["content"]
+    #store asstsnt response
+    st.session_state.messages.append(
+        {"role":"assistant","content":reply}
+    )
+    with st.chat_message("assistant"):
+        st.markdown(reply) 
 if st.session_state.chat:
     st.sidebar.markdown("### Analysis History")
     for i,(input,out) in enumerate(reversed(st.session_state.chat[-3:]),1):
