@@ -12,7 +12,7 @@ The system allows users to:
 
 FEATURES
 
-1.News Chatbot(Sidebar)
+1.News Chatbot Tab
 
 -Answer news-related questions
 -Detect fake news
